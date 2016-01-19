@@ -61,14 +61,17 @@ namespace Taller3
 						var weight = Convert.ToInt32(lineWord[1]);
 						var childNodeid = lineWord[2];
 
-						if (!NodeGraph[fatherNodeid].InfluenceList.ContainsKey(childNodeid))
-						{
-							NodeGraph[fatherNodeid].InfluenceList.Add(childNodeid, weight);
-						}
-						else
-						{
-							Console.WriteLine(string.Format("The node {0} has two connections to the child {1}. So the weigh conection {2} has been ignored.", fatherNodeid, childNodeid, weight));
-						}
+						if (NodeGraph[fatherNodeid].InfluenceList.ContainsKey(childNodeid))
+							continue;
+
+						//Add Node that I influence
+						NodeGraph[fatherNodeid].InfluenceList.Add(childNodeid, weight);
+
+						if (NodeGraph[childNodeid].InfluenceMeList.ContainsKey(fatherNodeid))
+							continue;
+
+						//Add Node that influence me
+						NodeGraph[childNodeid].InfluenceMeList.Add(fatherNodeid, weight);
 					}
 
 					sr.Close();
