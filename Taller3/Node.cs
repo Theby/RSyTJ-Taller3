@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Taller3
 {
-	class Node
+	public class Node
 	{
 		public string Id;
-		public int Tag;
+		public float Tag;
 		public bool Active;
 
 		/// <summary>
 		/// - (Node ID, Weight)
 		/// </summary>
-		public Dictionary<string, int> InfluenceList;
-		public Dictionary<string, int> InfluenceMeList;
+		public Dictionary<string, float> InfluenceList;
+		public Dictionary<string, float> InfluenceMeList;
 
-		public Node(string id, int tag)
+		public Node(string id, float tag)
 		{
 			Id = id;
 			Tag = tag;
 			Active = false;
 
-			InfluenceList = new Dictionary<string, int>();
-			InfluenceMeList = new Dictionary<string, int>();
+			InfluenceList = new Dictionary<string, float>();
+			InfluenceMeList = new Dictionary<string, float>();
 		}
 	}
 }
