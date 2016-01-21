@@ -31,15 +31,28 @@ namespace Taller3
 
 			Console.WriteLine("> File read succefull");
 
+			Console.WriteLine("==== Calculatin Fn(i) =====");
 			foreach (var node in graphNode.NodeGraph)
 			{
 				graphNode.F3(node.Key);
 				graphNode.RetweetImpact(node.Key);
 			}
+			Console.WriteLine("==== Fn(i) Done =====");
 
-			KendallCoef.KendallCoefCalculation(graphNode.FileNames[0], graphNode.FileNames[1]);
-			KendallCoef.KendallCoefCalculation(graphNode.FileNames[0], graphNode.FileNames[2]);
-			KendallCoef.KendallCoefCalculation(graphNode.FileNames[1], graphNode.FileNames[2]);
+			Console.WriteLine("==== Calculatin Kandall =====");
+			var file1 = graphNode.FileNames[0];
+			var file2 = graphNode.FileNames[1];
+			var file3 = graphNode.FileNames[2];
+
+			var k1 = KendallCoef.KendallCoefCalculation(file1, file2);
+			var k2= KendallCoef.KendallCoefCalculation(file1, file3);
+			var k3= KendallCoef.KendallCoefCalculation(file2, file3);
+
+			graphNode.OutPutKendallFile(file1, file2, k1);
+			graphNode.OutPutKendallFile(file1, file3, k2);
+			graphNode.OutPutKendallFile(file2, file3, k3);
+
+			Console.WriteLine("==== Kandall Done =====");
 
 			Console.WriteLine("> Execution Done");
 			Console.ReadLine();

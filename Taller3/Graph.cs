@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.IO;
 using System.Linq;
 
@@ -23,9 +24,10 @@ namespace Taller3
 
 			FileNames = new []
 			{
-				"CentralidadInfluenciaF2(resumen).txt",
-				"CentralidadInfluenciaF3(resumen).txt",
-				"RetwittImpact(resumen).txt"
+				"CentralidadInfluenciaF2(resumen).csv",
+				"CentralidadInfluenciaF3(resumen).csv",
+				"RetwittImpact(resumen).csv",
+				"KendallCoef.csv"
 			};
 
 			foreach (var file in FileNames.Where(File.Exists))
@@ -62,11 +64,12 @@ namespace Taller3
 			return f1List;
 		}
 
-		public List<string> F2(string id)
+		public List<string> F2(string id, bool individualOutput = false)
 		{
-			var f2List = F1(id);
+			var f1List = F1(id);
+			var f2List = new List<string>(f1List);
 
-			foreach (var activeNodeId in f2List)
+			foreach (var activeNodeId in f1List)
 			{
 				foreach (var nodesToInfluence in NodeGraph[activeNodeId].InfluenceList)
 				{
@@ -87,17 +90,20 @@ namespace Taller3
 			NodeGraph[id].InfluenceSize = f2List.Count;
 
 			//OutPutList("F2LIST", f2List);
-			OutPutFnFile("F2", id, f2List);
-			OutPutFnSummaryFile("F2", id);
+			if(individualOutput)
+				OutPutFnFile("F2", id, f2List);
+
+			OutPutFnSummaryFile("F2", id, f2List);
 			return f2List;
 
 		}
 
-		public void F3(string id)
+		public void F3(string id, bool individualOutput = false)
 		{
-			var f3List = F2(id);
+			var f2List = F2(id, individualOutput);
+			var f3List = new List<string>(f2List);
 
-			foreach (var activeNodeId in f3List)
+			foreach (var activeNodeId in f2List)
 			{
 				foreach (var nodesToInfluence in NodeGraph[activeNodeId].InfluenceList)
 				{
@@ -118,13 +124,25 @@ namespace Taller3
 			NodeGraph[id].InfluenceSize = f3List.Count;
 
 			//OutPutList("F3LIST", f3List);
-			OutPutFnFile("F3", id, f3List);
-			OutPutFnSummaryFile("F3", id);
+			if(individualOutput)
+				OutPutFnFile("F3", id, f3List);
+
+			OutPutFnSummaryFile("F3", id, f3List);
 		}
 
 		public void RetweetImpact(string id)
 		{
-			var impact = NodeGraph[id].OTs*Math.Log10(NodeGraph[id].InfluenceList.Count);
+			double impact = NodeGraph[id].OTs;
+			double influenceListCount = NodeGraph[id].InfluenceList.Count;
+
+			if (influenceListCount > 0)
+			{
+				impact *= Math.Log10(influenceListCount);
+			}
+			else
+			{
+				impact *= 0;
+			}
 
 			OutPutRetweetsFile(id, impact);
 		}
@@ -146,7 +164,6 @@ namespace Taller3
 
 						var id = lineWord[0];
 						var tag = Convert.ToSingle(lineWord[1]);
-
 						var ots = 0;
 
 						if (lineWord.Length == 3)
@@ -232,25 +249,38 @@ namespace Taller3
 			File.WriteAllLines(path, ids);
 		}
 
-		private void OutPutFnSummaryFile(string title, string id)
+		private void OutPutFnSummaryFile(string title, string id, List<string> ids)
 		{
-			var fileName = $"CentralidadInfluencia{title}(resumen).txt";
+			var fileName = $"CentralidadInfluencia{title}(resumen).csv";
 			var path = _assemblyPath + @"\" + fileName;
+
+			string idsList = ids.Aggregate(string.Empty, (current, id1) => current + (id1 + " "));
 
 			using (var file = new StreamWriter(path, true))
 			{
-				file.WriteLine("{0} {1}", id, NodeGraph[id].InfluenceSize);
+				file.WriteLine("{0},{1},{2}", id, NodeGraph[id].InfluenceSize, idsList);
 			}
 		}
 
 		private void OutPutRetweetsFile(string id, double impact)
 		{
-			var fileName = "RetwittImpact(resumen).txt";
+			var fileName = "RetwittImpact(resumen).csv";
 			var path = _assemblyPath + @"\" + fileName;
 
 			using (var file = new StreamWriter(path, true))
 			{
-				file.WriteLine("{0} {1}", id, impact);
+				file.WriteLine("{0},{1}", id, impact);
+			}
+		}
+
+		public void OutPutKendallFile(string file1, string file2, double value)
+		{
+			var fileName = "KendallCoef.csv";
+			var path = _assemblyPath + @"\" + fileName;
+
+			using (var file = new StreamWriter(path, true))
+			{
+				file.WriteLine("{0},{1},{2}", file1, file2, value);
 			}
 		}
 

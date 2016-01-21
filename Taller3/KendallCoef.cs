@@ -7,8 +7,9 @@ namespace Taller3
 {
 	public static class KendallCoef
 	{
-		public static void KendallCoefCalculation(string mainFileName, string secondFileName)
+		public static double KendallCoefCalculation(string mainFileName, string secondFileName)
 		{
+			double kendall = 0;
 			var mainList = ReadFile(mainFileName);
 
 			if (mainList != null)
@@ -28,11 +29,13 @@ namespace Taller3
 					Console.WriteLine("> Calculating Kendall: ");
 					var factorResult = FactorCalculation(secondListValues);
 					var rankNumbers = secondListValues.Count;
-					var kendall = factorResult / (0.5f * rankNumbers * (rankNumbers - 1));
+					kendall = factorResult / (0.5f * rankNumbers * (rankNumbers - 1));
 
-					Console.WriteLine(">> {0} vs {1} = {2} ", mainFileName, secondFileName, kendall);					
+					Console.WriteLine(">> {0} vs {1} = {2} ", mainFileName, secondFileName, kendall);								
 				}
 			}
+
+			return kendall;
 		}
 
 		private static double FactorCalculation(List<double> pageRanks)
@@ -57,9 +60,9 @@ namespace Taller3
 		}
 
 
-		private static List<Tuple<int, double>> ReadFile(string fileName)
+		private static List<Tuple<double, double>> ReadFile(string fileName)
 		{
-			var pageRanks = new List<Tuple<int, double>>();
+			var pageRanks = new List<Tuple<double, double>>();
 
 			try
 			{   // Open the text file using a stream reader.
@@ -68,10 +71,11 @@ namespace Taller3
 					string line;
 					while ((line = sr.ReadLine()) != null)
 					{
-						var lineWord = line.Split(' ');
+						var lineWord = line.Split(',');
+						var id = Convert.ToDouble(lineWord[0]);
+						var size = Convert.ToDouble(lineWord[1]);
 
-						var tuple = new Tuple<int, double>(
-							Convert.ToInt32(lineWord[0]), Convert.ToDouble(lineWord[1]));
+						var tuple = new Tuple<double, double>(id, size);
 
 						pageRanks.Add(tuple);
 					}
