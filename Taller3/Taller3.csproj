@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graph.cs" />
+    <Compile Include="KendallCoef.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Taller3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

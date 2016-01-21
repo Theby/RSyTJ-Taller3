@@ -31,8 +31,17 @@ namespace Taller3
 
 			Console.WriteLine("> File read succefull");
 
-			graphNode.F3("0");
+			foreach (var node in graphNode.NodeGraph)
+			{
+				graphNode.F3(node.Key);
+				graphNode.RetweetImpact(node.Key);
+			}
 
+			KendallCoef.KendallCoefCalculation(graphNode.FileNames[0], graphNode.FileNames[1]);
+			KendallCoef.KendallCoefCalculation(graphNode.FileNames[0], graphNode.FileNames[2]);
+			KendallCoef.KendallCoefCalculation(graphNode.FileNames[1], graphNode.FileNames[2]);
+
+			Console.WriteLine("> Execution Done");
 			Console.ReadLine();
 		}
 	}
